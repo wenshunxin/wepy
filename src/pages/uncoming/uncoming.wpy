@@ -1,0 +1,159 @@
+<template>
+    <loading hidden="{{isLoading}}">正在加载...</loading>
+    <view class="header-search">
+        <button type="button" name="button" @tap="handleSearchBtn">
+            <i-icon type="search" size="16"/> 搜索
+        </button>
+    </view>
+    <i-tabs current="{{ current }}" bindchange="handleChange">
+        <i-tab key="in_theaters" title="正在热映"></i-tab>
+        <i-tab key="coming_soon" title="即将上映"></i-tab>
+        <i-tab key="top250" title="top250"></i-tab>
+    </i-tabs>
+    <view class="container">
+        <block wx:for="{{list}}" wx:for-index="idx" wx:for-item="film" wx:key="index">
+            <view class="item" @tap="handleDeatil({{film}})">
+                <view class="item-left">
+                    <image src="{{film.images.small}}" alt=""></image>
+                </view>
+                <view class='item-right'>
+                    <!-- 名称 -->
+                    <view>
+                        <text>{{film.title}}</text>
+                        <text>{{film.year}}</text>
+                    </view>
+                    <!-- 评分 -->
+                    <view>
+                        <text>评分</text>
+                        <text wx:if="{{film.rating.average == 0}}" style="font-size:26rpx;color:#999;">暂无评分</text>
+                        <text wx:if="{{film.rating.average != 0}}" >{{film.rating.average}}</text>
+                    </view>
+                    <!-- 导演 -->
+                    <view>
+                        <text>导演</text>
+                        <block wx:for="{{film.directors}}" wx:for-item="directors" wx:key="index1">
+                            <text>{{directors.name}}</text>
+                        </block>
+                    </view>
+                    <!-- 主演 -->
+                    <view>
+                        <text>主演</text>
+                        <block wx:for="{{film.casts}}" wx:for-item="casts" wx:key="index2">
+                            <text>{{casts.name}}</text>
+                        </block>
+                    </view>
+                </view>
+            </view>
+        </block>
+
+        <view class="load-more-wrap" wx:if="{{isLoading}}">
+            <block wx:if="{{hasMore}}">
+                <view class="load-content">
+                    <text class="weui-loading"/><text class="loading-text">玩命加载中</text>
+                </view>
+            </block>
+            <block wx:else>
+                <view class="load-content">
+                    <text>没有更多内容了</text>
+                </view>
+            </block>
+        </view>
+    </view>
+</template>
+<script>
+    import wepy from "wepy";
+    export default class Uncoming  extends wepy.page{
+        config = {
+            "component": true,
+            "enablePullDownRefresh":true,
+            "navigationBarTitleText": '正在热映',
+            "backgroundColor":"#2d8cf0",
+            "usingComponents": {
+                "i-button": "../../iview/button/index",
+                "i-tabs": "../../iview/tabs/index",
+                "i-tab": "../../iview/tab/index"
+            }
+        }
+        data = {
+            current: 'in_theaters',
+            isLoading:false,
+            hasMore: true,
+            list: [],
+            start:0,
+            type:"in_theaters"
+        }
+
+        methods = {
+            /**
+             * 进入电影详情
+             */
+
+            handleDeatil(row){
+                wepy.navigateTo({
+                    url:`../film-detail/film-detail?id=${row.id}&title=${row.title}&type=ing`
+                })
+            },
+            handleSearchBtn(){
+                wepy.navigateTo({
+                    url:`../search/search`
+                })
+            }
+
+        }
+
+        handleChange ({ detail }) {
+            this .current =  detail.key;
+            this.list = [];
+            this.start = 0;
+            this.isLoading = false;
+            this.hasMore=true;
+            this.$apply();
+            this.handleGetDate();
+        }
+        /**
+         * 获取数据
+         */
+        handleGetDate(){
+            let that = this;
+            wepy.request({
+                url:`https://api.douban.com/v2/movie/${that.current}?apikey=0b2bdeda43b5688921839c8ecb20399b&city=%E5%8C%97%E4%BA%AC&start=${that.start}&count=10&client=&udid=`,
+                header: {
+                    "Content-Type": "json",
+                },
+                success(res){
+                    that.isLoading = true;
+                    if(res.data.subjects.length != 10){
+                        that.hasMore = false;
+                        that.$apply();
+                        return false;
+                    }
+                    that.list = that.list.concat(res.data.subjects);
+                    that.$apply();
+                    wepy.stopPullDownRefresh();
+                }
+            })
+        }
+
+        /**
+         * 下拉刷新
+         */
+        onPullDownRefresh(){
+            this.start = 0;
+            this.list = [];
+            this.hasMore = true;
+            this.isLoading = false;
+            this.$apply();
+            this.handleGetDate();
+        }
+        /*
+        *上拉
+         */
+        onReachBottom(){
+            this.start +=10;
+            this.handleGetDate();
+        }
+        onLoad(){
+            this.handleGetDate();
+        }
+    }
+</script>

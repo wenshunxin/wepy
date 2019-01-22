@@ -1,0 +1,67 @@
+<template>
+    <view class="rating">
+        <view class="rating-1">
+            <text>豆瓣评分</text>
+            <text class="tm">TM</text>
+            <i-icon style="float:right;" size="16" type="enter" />
+        </view>
+        <view class="rating-2">
+            <view class="rating-2-1" wx:if="{{dataInfo.rating.average != 0}}">
+                <view class='first-child'>{{dataInfo.rating.average}}</view>
+                <view style="line-height:2rpx;">
+                    <i-rate size="14" count="{{5}}" value="{{dataInfo.averageNum}}" ></i-rate>
+                </view>
+            </view>
+            <view class="rating-2-1  12" wx:if="{{dataInfo.rating.average == 0}}" >
+                <view class="rating-2-1-none">暂无评分</view>
+            </view>
+            <view class="rating-2-2">
+                <block wx:for="{{rating}}" wx:for-item="item" wx:key="idx">
+                    <view class="rating-2-2-1">
+                        <view style="display:inline-block;text-align:right;width:120rpx;margin-right:14rpx;">
+                            <i-rate count="{{item.num}}"  size="10"></i-rate>
+                        </view>
+                        <i-progress i-class="progress" stroke-width="5" percent="{{item.value}}" hide-info></i-progress>
+                    </view>
+                </block>
+                <view class="rating-3">{{dataInfo.ratings_count}}人评分</view>
+            </view>
+        </view>
+    </view>
+</template>
+<script>
+    import wepy from "wepy";
+    export default class Rating extends wepy.component{
+        props = {
+            dataInfo:{
+                type:Object,
+                default:{},
+                twoWay: true
+            },
+            rating:{
+                type:[Array],
+                default:[],
+                twoWay: true
+            }
+        }
+
+        events = {
+          // 'index-broadcast': (...args) => {
+          //   let $event = args[args.length - 1];
+          // }
+        }
+        data = {
+
+        }
+
+        onLoad(){
+            console.log(this.dataInfo)
+        }
+
+        watch = {
+            dataInfo(curVal, oldVal){
+                console.log(12)
+            }
+        }
+    }
+</script>

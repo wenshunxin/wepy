@@ -1,0 +1,133 @@
+<style media="screen">
+    page{
+        background: #EDEDED;
+    }
+    .user-info{
+        width:100%;
+        text-align: center;
+        margin:30rpx 0 60rpx;
+        font-size: 36rpx;
+        color:#000;
+    }
+    .user-info image{
+        width:120rpx;
+        height:120rpx;
+        border-radius: 10rpx;
+        margin:0 0 5rpx 0;
+    }
+    .mine-item{
+        width:100%;
+        padding: 0 20rpx;
+        height:100rpx;
+        background-color: #fff;
+        box-sizing: border-box;
+        line-height: 100rpx;
+        font-size: 42rpx;
+        border-top:1px solid #F1F1F1;
+        border-bottom:1px solid #F1F1F1;
+    }
+    .mine-item:active{
+        background: #D4D4D4;
+    }
+    .mine-item text{
+        margin:0 30rpx 0 10rpx;
+        font-size:42rpx;
+    }
+    .mine-content{
+        width:100%;
+        border-top:1px solid #F1F1F1;
+        border-bottom:1px solid #F1F1F1;
+        box-sizing: border-box;
+        margin:20rpx 0;
+        background: #fff;
+    }
+    .mine-content .mine-item{
+        border:0 !important;
+        position: relative;
+    }
+    .mine-content-item{
+        margin-bottom: 1px;
+    }
+    .mine-content-item::after{
+        content: "";
+        height:1px;
+        width:100%;
+        position: absolute;
+        bottom:-1px;
+        left:100rpx;
+        background: #F1F1F1;
+    }
+</style>
+<template>
+    <view class="user-info">
+        <image src="{{userSrc}}"></image>
+        <view>{{userName}}</view>
+    </view>
+
+    <view class="mine-item">
+        <text style="color:#26B570;" class="icon iconfont icon-weixinzhifu1"></text>支付
+        <i-icon type="enter" size="21" style="float:right;" color="#BCBCBC"/>
+    </view>
+
+    <view class="mine-content">
+        <view class="mine-content-item mine-item">
+            <text style="color:#26B570;" class="icon iconfont icon-weixinshoucang"></text>收藏
+            <i-icon type="enter" size="21" style="float:right;" color="#BCBCBC"/>
+        </view>
+        <view  class="mine-content-item mine-item">
+            <text style="color:#4C85D6;" class="icon iconfont icon-weixinxiangce"></text>相册
+            <i-icon type="enter" size="21" style="float:right;" color="#BCBCBC"/>
+        </view>
+        <view  class="mine-content-item mine-item">
+            <text style="color:#4C85D6;" class="icon iconfont icon-weixinqiabao"></text>卡包
+            <i-icon type="enter" size="21" style="float:right;" color="#BCBCBC"/>
+        </view>
+        <view  class=" mine-item">
+            <text style="color:#F4AB62;" class="icon iconfont icon-weixinbiaoqing"></text>表情
+            <i-icon type="enter" size="21" style="float:right;" color="#BCBCBC"/>
+        </view>
+    </view>
+
+    <view class="mine-item">
+        <text style="color:#4C85D6;" class="icon iconfont icon-shezhi"></text>设置
+        <i-icon type="enter" size="21" style="float:right;" color="#BCBCBC" />
+    </view>
+</template>
+<script>
+    import wepy from "wepy";
+    export default class Mine  extends wepy.page{
+        config = {
+            "navigationBarTitleText": '我',
+            "usingComponents": {
+                "i-button": "../../iview/button/index",
+                "i-avatar": "../../iview/avatar/index",
+                "i-icon": "../../iview/icon/index"
+            }
+        }
+        data={
+            userName:"",
+            userSrc:""
+        }
+        methods = {
+
+        }
+        onLoad(){
+            let that = this;
+            wepy.getSetting({
+                success(res){
+                    if(res.authSetting['scope.userInfo']){
+                        wepy.getUserInfo({
+                            success(res){
+                                console.log(res);
+                                that.$parent.globalData.userInfo = res.userInfo;
+                                that.userName = res.userInfo.nickName;
+                                that.userSrc = res.userInfo.avatarUrl;
+                                that.$apply();
+                            }
+                        })
+                    }
+                }
+            })
+        }
+    }
+</script>

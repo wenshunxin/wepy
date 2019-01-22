@@ -1,0 +1,263 @@
+<style lang="less">
+    @import "../../asstes/css/file-detail.wxss";
+</style>
+
+<template>
+    <loading hidden="{{isLoading}}">正在加载...</loading>
+    <view id="detail" class="" wx:if="{{isLoading}}">
+        <!-- 头部 -->
+        <view id="header" wx:if="{{dataInfo.images.small}}">
+            <view class="header-left">
+                <image src="{{dataInfo.images.small}}" ></image>
+            </view>
+            <view class="header-right">
+                <view class="header-1" wx:if="{{dataInfo.year}}">
+                    {{dataInfo.title}}({{dataInfo.year}})
+                </view>
+                <view class="header-2">
+                    {{dataInfo.original_title}}({{dataInfo.year}})
+                </view>
+                <view class="header-3">
+                    <block wx:for="{{dataInfo.genres}}" wx:for-item="item" wx:key="index">
+                        <text>{{item}}</text>
+                    </block>
+                    /
+                    <block wx:for="{{dataInfo.countries}}" wx:for-item="item" wx:key="index">
+                        <text>{{item}}</text>
+                    </block>
+                    /
+                    <text>{{dataInfo.mainland_pubdate}}上映</text>
+                    /
+                    <block wx:for="{{dataInfo.durations}}" wx:for-item="item" wx:key="index">
+                        <text>片场{{item}}</text>
+                    </block>
+                </view>
+                <view class="header-4">
+                    <button inline="true" type=""  ><icon type="success" size="12" color="red" /> 想看</button>
+                    <button inline="true"  ><icon type="success" size="12" color="red" /> 已看</button>
+                </view>
+            </view>
+        </view>
+
+        <!-- 评分  -->
+        <view id="rating">
+            <rating :dataInfo.sync="dataInfo" :rating.sync="rating"></rating>
+        </view>
+
+
+        <!-- 简介 -->
+        <view id="summary" class="view-block">
+            <view class="title" style="padding:0;">简介</view>
+            <view class="text">
+                {{dataInfo.summary}}
+            </view>
+        </view>
+
+        <!-- 影人 -->
+        <view id="casts" class="view-block">
+            <view class="title">影人</view>
+            <view class="scroll_box">
+                <scroll-view class="scroll-view_x" scroll-x style="width: auto;overflow:hidden;">
+                    <block wx:for="{{casts}}" wx:for-item="item" wx:for-index="index" wx:key = "idx">
+                        <view class="item_list">
+                            <image src="{{item.avatars.small}}" ></image>
+                            <view class="item_book_text">{{item.name}}</view>
+                            <view class="item_book_text-1">{{index==0?'导演':"演员"}}</view>
+                        </view>
+                    </block>
+                </scroll-view>
+              </view>
+        </view>
+
+        <!-- 预告片/剧照 -->
+
+        <view id="" class="view-block">
+            <view class="title">预告片/剧照</view>
+            <view class="scroll_box">
+                <scroll-view class="scroll-view_x" scroll-x style="width: auto;overflow:hidden;">
+                    <block wx:for="{{photos}}" wx:for-item="item" wx:key = "idx">
+                        <view class="item_list item_photos">
+                            <video wx:if="{{item.type == 'video'}}" controls src="{{item.image}}" ></video>
+                            <image else src="{{item.image}}" @tap="handlePreviewImage({{item.image}})"></image>
+                        </view>
+                    </block>
+                </scroll-view>
+              </view>
+        </view>
+
+
+        <!-- 短评 -->
+        <view id="comments">
+            <view class="comments">
+                <view class="comments-header">
+                    <view>短评</view>
+                    <view class="last-child" @tap="handleGoComments">全部 {{commentsData.total}} <i-icon type="enter" size="14" color="#666"/></view>
+                </view>
+                <block wx:for="{{commentsData.comments}}" wx:key="index" wx:for-item="item">
+                    <view class="comments-index">
+                        <view class="comments-index-1">
+                            <view>
+                                <image src="{{item.author.avatar}}"></image>
+                            </view>
+                            <view class="comments-index-1-2">
+                                <view>{{item.author.name}}</view>
+                                <view class="comments-index-1-2-2">
+                                    <i-rate count="5" value="{{item.rating.value}}"  size="12"></i-rate>
+                                    <text class="text">{{item.created_at}}</text>
+                                </view>
+                            </view>
+                        </view>
+                        <view class="comments-index-2">{{item.content}}</view>
+                        <view class="comments-index-3"><i-icon type="praise" size="16" color="#999"/> {{item.useful_count}}</view>
+                    </view>
+                </block>
+                <view class="comments-header" @tap="handleGoComments">
+                    <view>查看全部短评</view>
+                    <view class="last-child" ><i-icon type="enter" size="14" color="#666"/></view>
+                </view>
+            </view>
+        </view>
+    </view>
+</template>
+<script>
+    import wepy from "wepy";
+    import Rating from "./rating";
+
+    export default class Filmdetail extends wepy.page{
+        config = {
+            "navigationBarTitleText": '',
+            "usingComponents": {
+                "i-icon": "../../iview/icon/index",
+                "i-button": "../../iview/button/index",
+                "i-progress": "../../iview/progress/index",
+                "i-rate": "../../iview/rate/index"
+            }
+        }
+
+        data = {
+            isLoading:false,
+            id:"",
+            title:"",
+            type:"",
+            dataInfo:{},
+            rating:[],
+            casts:[],
+            // 预告片和剧照
+            photos:[],
+            // 短评数据
+            commentsData:{}
+        }
+
+        components = {
+            rating:Rating
+        }
+
+        methods = {
+            handlePreviewImage(src){
+                let that = this;
+                let photos = [];
+                that.photos.forEach(data=>{
+                    if(data.type !="video"){
+                        photos.push(data.image)
+                    }
+                });
+                wx.previewImage({
+                    current: src, // 当前显示图片的http链接
+                    urls:photos, // 需要预览的图片http链接列表,
+                    complete(res){
+                        that.isLoading = true;
+                        that.$apply();
+                    }
+                })
+            },
+
+            handleGoComments(){
+                wepy.navigateTo({
+                    url:`../comments/comments?id=${this.id}&title=${this.title}`
+                })
+            }
+        }
+        onLoad(options){
+            this.id = options.id;
+            this.title = options.title;
+            this.type = options.type;
+            this.handleGetCommentsData(options.id);
+            wepy.setNavigationBarTitle({
+                title:options.title
+            });
+            this.$apply();
+        }
+        onReady(){
+            this.handleGetData();
+        }
+        onUnload(){
+            this.dataInfo={};
+            this.rating = [];
+            this.$apply();
+        }
+        /**
+         * 获取数据
+         */
+        handleGetData(){
+            // this.isLoading = false;
+            let that = this;
+            wepy.request({
+                url:`https://api.douban.com/v2/movie/subject/${that.id}?apikey=0b2bdeda43b5688921839c8ecb20399b&city=%E5%8C%97%E4%BA%AC&client=&udid=`,
+                header: {
+                    'content-type':'json'
+                },
+                success(res){
+                    that.rating = [];
+                    that.casts = [];
+                    that.dataInfo = {};
+                    that.isLoading = true;
+                    that.dataInfo = res.data;
+                    let count = 0;
+                    for(let i in res.data.rating.details){
+                        count +=res.data.rating.details[i];
+                        let obj = {
+                            num:~~i,
+                            value:res.data.rating.details[i]
+                        }
+                        that.rating.push(obj);
+                    }
+                    that.dataInfo["averageNum"] = that.$parent.handleRating(res.data.rating.average);
+                    that.rating.reverse();
+                    that.rating.forEach(data=>{
+                        data['value'] = parseInt(~~data['value']/count*100)
+                    });
+                    that.casts= that.dataInfo.directors.concat(that.dataInfo.casts);
+
+                    let trailer_urls = [];
+                    that.dataInfo.trailer_urls.forEach(data=>{
+                        let obj = {
+                            image:data,
+                            type:"video"
+                        };
+                        trailer_urls.push(obj);
+                    });
+                    that.photos = trailer_urls.concat(that.dataInfo.photos);
+                    that.$apply();
+                }
+            })
+        }
+
+        /**
+         * 短评  数据列表
+         */
+
+        handleGetCommentsData(id){
+            let that = this;
+            wepy.request({
+                url:`https://api.douban.com/v2/movie/subject/${id}/comments?apikey=0b2bdeda43b5688921839c8ecb20399b&count=4&client=&udid=`,
+                header: {
+                    'content-type': 'json'
+                },
+                success(res){
+                    that.commentsData = res.data;
+                    that.$apply();
+                }
+            })
+        }
+    }
+</script>

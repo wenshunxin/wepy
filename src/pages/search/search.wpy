@@ -1,0 +1,158 @@
+<style media="screen">
+    .header-search{
+        position:relative;
+    }
+    .header-search .icon{
+        position:absolute;
+        top:20rpx;
+        left:34rpx;
+    }
+    .header-search input{
+        border:1px solid #999;
+        border-radius:10rpx;
+        padding:0 10rpx 0 50rpx;
+        box-sizing:border-box;
+        background:#fff;
+        font-size:28rpx;
+        color:#666;
+        height:60rpx;
+        line-height:60rpx;
+    }
+    .list-item{
+        width:100%;
+        padding:40rpx 0rpx;
+        height:300rpx;
+        box-sizing:border-box;
+        border-bottom:1px solid #999;
+        display:flex;
+    }
+    .list-item-left image{
+        width:160rpx;
+        height:100%;
+    }
+    .list-item-right{
+        padding-left:26rpx;
+    }
+    .list-item-right .list-item-right-1{
+        font-size:32rpx;
+        color:#000;
+        font-weight:600;
+    }
+    .list-item-right-2{
+        font-size:24rpx;
+        color:#999;
+        position:relative;
+        line-height:32rpx;
+        margin:10rpx 0;
+    }
+    .list-item-right-3{
+        font-size:26rpx;
+        color:#999;
+        position:relative;
+        line-height:32rpx;
+    }
+    .isNone{
+        text-align:center;
+        font-size:32rpx;
+        color:#999;
+        margin:30rpx 0;
+    }
+</style>
+<template>
+    <view class="header-search">
+        <input value="{{search}}" placeholder="搜索" focus="true" confirm-type="search" bindconfirm="handleSearch"></input>
+        <i-icon type="search" color="#999" class="icon" size="16"/>
+    </view>
+    <view class="container">
+        <!-- <block wx:for="{{list}}" wx:for-item="item" wx:key="index"> -->
+            <!-- <view class="list-item" @tap="handleDetail({{item}})">
+                <view class="list-item-left">
+                    <image src="{{item.images.small}}"></image>
+                </view>
+                <view class="list-item-right">
+                    <view class="list-item-right-1">{{item.title}}</view>
+                    <view class="list-item-right-2">
+                        <i-rate count="5" value="{{item.average}}"></i-rate>{{item.rating.average == '0'?"暂无评分":item.rating.average}}
+                    </view>
+                    <view class="list-item-right-3">
+                        {{item.text}}
+                    </view>
+                </view>
+            </view> -->
+        <!-- </block> -->
+        <repeat for="{{list}}" item="item">
+            <child :item="item" ></child>
+        </repeat>
+        <view class="isNone" wx:if="{{isNone}}">无搜索结果</view>
+    </view>
+</template>
+<script>
+    import wepy from "wepy";
+    import Child from "./search_component";
+    export default class Search  extends wepy.page{
+        config = {
+            "navigationBarTitleText": '搜索',
+            "backgroundColor":"#2d8cf0",
+            "usingComponents": {
+                "i-button": "../../iview/button/index",
+                "i-icon": "../../iview/icon/index",
+                "i-rate": "../../iview/rate/index"
+            }
+        }
+
+        data = {
+            isLoading:false,
+            hasMore:true,
+            search:"",
+            start:0,
+            isNone:false,
+            list:[]
+        }
+
+        methods = {
+            handleDetail(row){
+                wepy.redirectTo({
+                    url:`../film-detail/film-detail?id=${row.id}&title=${row.title}&type=ing`
+                })
+            }
+        }
+        components = {
+            // 声明页面中要使用到的Child组件的ID为child
+            child: Child
+        }
+        onLoad(){
+
+        }
+        onShow(){
+            this.list = [];
+            this.$apply();
+        }
+        onHide(){
+            this.list = [];
+            this.$apply();
+        }
+        handleSearch(e){
+            let that = this;
+            wepy.request({
+                url:`https://api.douban.com/v2/movie/search?q=${e.detail.value}&apikey=0b2bdeda43b5688921839c8ecb20399b&start=${that.start}&count=20`,
+                header: {
+                    "Content-Type": "json",
+                },
+                success(res){
+                    if(res.data.total == 0){
+                        that.isNone = true;
+                    }else{
+                        that.isNone = false;
+                    }
+                    that.isLoading = true;
+                    that.list = res.data.subjects;
+                    that.list.forEach(data=>{
+                        data["average"] = that.$parent.handleRating(data.rating.average);
+                        data["text"] = data.year +" / "+data.pubdates.join("") +" / "+data.genres.join("");
+                    });
+                    that.$apply();
+                }
+            })
+        }
+    }
+</script>

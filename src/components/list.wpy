@@ -1,0 +1,27 @@
+<template>
+    <view class="list">
+        <view>{{someData}}</view>
+    </view>
+</template>
+<script>
+    import wepy from 'wepy'
+    export default class List extends wepy.component{
+        props = {
+            data: Object
+        }
+        computed = {
+            someData () {
+                console.log(11)
+                return this.data && this.data.title
+            }
+        }
+        onLoad () {
+            console.log(this.data)
+        }
+        watch ={
+            someData(newValue){
+                console.log(newValue)
+            }
+        }
+    }
+</script>

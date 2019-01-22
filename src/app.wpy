@@ -1,0 +1,175 @@
+<style lang="less">
+    page{
+        background:#f2f2f2;
+        font-family:"MI LANTING" !important;
+    }
+    .container {
+        width: 100%;
+        height:100%;
+        background:#f2f2f2;
+        padding:0 20rpx;
+        box-sizing:border-box;
+        // margin-top:80px;
+    }
+    .item{
+        display:flex;
+        font-size:0;
+        margin-bottom:30rpx;
+    }
+    .item-left{
+         width: 320rpx;
+    }
+    .item-left image{
+        width: 320rpx;
+    }
+    .item-right{
+        font-size:28rpx;
+        padding:10rpx 0 0 20rpx;
+        box-sizing:border-box;
+    }
+    .item text{
+        margin-right:10px;
+    }
+    .item-right view{
+        margin-bottom:20rpx;
+    }
+    .weui-loading {
+      width: 20px;
+      height: 20px;
+      display: inline-block;
+      vertical-align: middle;
+      -webkit-animation: weuiLoading 1s steps(12, end) infinite;
+      animation: weuiLoading 1s steps(12, end) infinite;
+      background: transparent url(data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iciIgd2lkdGg9JzEyMHB4JyBoZWlnaHQ9JzEyMHB4JyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj4KICAgIDxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiBmaWxsPSJub25lIiBjbGFzcz0iYmsiPjwvcmVjdD4KICAgIDxyZWN0IHg9JzQ2LjUnIHk9JzQwJyB3aWR0aD0nNycgaGVpZ2h0PScyMCcgcng9JzUnIHJ5PSc1JyBmaWxsPScjRTlFOUU5JwogICAgICAgICAgdHJhbnNmb3JtPSdyb3RhdGUoMCA1MCA1MCkgdHJhbnNsYXRlKDAgLTMwKSc+CiAgICA8L3JlY3Q+CiAgICA8cmVjdCB4PSc0Ni41JyB5PSc0MCcgd2lkdGg9JzcnIGhlaWdodD0nMjAnIHJ4PSc1JyByeT0nNScgZmlsbD0nIzk4OTY5NycKICAgICAgICAgIHRyYW5zZm9ybT0ncm90YXRlKDMwIDUwIDUwKSB0cmFuc2xhdGUoMCAtMzApJz4KICAgICAgICAgICAgICAgICByZXBlYXRDb3VudD0naW5kZWZpbml0ZScvPgogICAgPC9yZWN0PgogICAgPHJlY3QgeD0nNDYuNScgeT0nNDAnIHdpZHRoPSc3JyBoZWlnaHQ9JzIwJyByeD0nNScgcnk9JzUnIGZpbGw9JyM5Qjk5OUEnCiAgICAgICAgICB0cmFuc2Zvcm09J3JvdGF0ZSg2MCA1MCA1MCkgdHJhbnNsYXRlKDAgLTMwKSc+CiAgICAgICAgICAgICAgICAgcmVwZWF0Q291bnQ9J2luZGVmaW5pdGUnLz4KICAgIDwvcmVjdD4KICAgIDxyZWN0IHg9JzQ2LjUnIHk9JzQwJyB3aWR0aD0nNycgaGVpZ2h0PScyMCcgcng9JzUnIHJ5PSc1JyBmaWxsPScjQTNBMUEyJwogICAgICAgICAgdHJhbnNmb3JtPSdyb3RhdGUoOTAgNTAgNTApIHRyYW5zbGF0ZSgwIC0zMCknPgogICAgPC9yZWN0PgogICAgPHJlY3QgeD0nNDYuNScgeT0nNDAnIHdpZHRoPSc3JyBoZWlnaHQ9JzIwJyByeD0nNScgcnk9JzUnIGZpbGw9JyNBQkE5QUEnCiAgICAgICAgICB0cmFuc2Zvcm09J3JvdGF0ZSgxMjAgNTAgNTApIHRyYW5zbGF0ZSgwIC0zMCknPgogICAgPC9yZWN0PgogICAgPHJlY3QgeD0nNDYuNScgeT0nNDAnIHdpZHRoPSc3JyBoZWlnaHQ9JzIwJyByeD0nNScgcnk9JzUnIGZpbGw9JyNCMkIyQjInCiAgICAgICAgICB0cmFuc2Zvcm09J3JvdGF0ZSgxNTAgNTAgNTApIHRyYW5zbGF0ZSgwIC0zMCknPgogICAgPC9yZWN0PgogICAgPHJlY3QgeD0nNDYuNScgeT0nNDAnIHdpZHRoPSc3JyBoZWlnaHQ9JzIwJyByeD0nNScgcnk9JzUnIGZpbGw9JyNCQUI4QjknCiAgICAgICAgICB0cmFuc2Zvcm09J3JvdGF0ZSgxODAgNTAgNTApIHRyYW5zbGF0ZSgwIC0zMCknPgogICAgPC9yZWN0PgogICAgPHJlY3QgeD0nNDYuNScgeT0nNDAnIHdpZHRoPSc3JyBoZWlnaHQ9JzIwJyByeD0nNScgcnk9JzUnIGZpbGw9JyNDMkMwQzEnCiAgICAgICAgICB0cmFuc2Zvcm09J3JvdGF0ZSgyMTAgNTAgNTApIHRyYW5zbGF0ZSgwIC0zMCknPgogICAgPC9yZWN0PgogICAgPHJlY3QgeD0nNDYuNScgeT0nNDAnIHdpZHRoPSc3JyBoZWlnaHQ9JzIwJyByeD0nNScgcnk9JzUnIGZpbGw9JyNDQkNCQ0InCiAgICAgICAgICB0cmFuc2Zvcm09J3JvdGF0ZSgyNDAgNTAgNTApIHRyYW5zbGF0ZSgwIC0zMCknPgogICAgPC9yZWN0PgogICAgPHJlY3QgeD0nNDYuNScgeT0nNDAnIHdpZHRoPSc3JyBoZWlnaHQ9JzIwJyByeD0nNScgcnk9JzUnIGZpbGw9JyNEMkQyRDInCiAgICAgICAgICB0cmFuc2Zvcm09J3JvdGF0ZSgyNzAgNTAgNTApIHRyYW5zbGF0ZSgwIC0zMCknPgogICAgPC9yZWN0PgogICAgPHJlY3QgeD0nNDYuNScgeT0nNDAnIHdpZHRoPSc3JyBoZWlnaHQ9JzIwJyByeD0nNScgcnk9JzUnIGZpbGw9JyNEQURBREEnCiAgICAgICAgICB0cmFuc2Zvcm09J3JvdGF0ZSgzMDAgNTAgNTApIHRyYW5zbGF0ZSgwIC0zMCknPgogICAgPC9yZWN0PgogICAgPHJlY3QgeD0nNDYuNScgeT0nNDAnIHdpZHRoPSc3JyBoZWlnaHQ9JzIwJyByeD0nNScgcnk9JzUnIGZpbGw9JyNFMkUyRTInCiAgICAgICAgICB0cmFuc2Zvcm09J3JvdGF0ZSgzMzAgNTAgNTApIHRyYW5zbGF0ZSgwIC0zMCknPgogICAgPC9yZWN0Pgo8L3N2Zz4=) no-repeat;
+      background-size: 100%;
+    }
+    .load-more-wrap{
+      text-align: center;
+      padding: 10px 20px 20px 20px;
+    }
+
+    .header-search{
+        width:100%;
+        padding:20rpx;
+        background:#2d8cf0;
+        box-sizing:border-box;
+        display:flex;
+    }
+    .header-search .city{
+        width:100rpx;
+        font-size:32rpx;
+        color:#fff;
+        overflow: hidden;
+        text-overflow:ellipsis;
+        white-space: nowrap;
+    }
+    .header-search button{
+        width:calc(100% - 120rpx);
+        line-height:2;
+        font-size:28rpx;
+        color:#666;
+        background:#fff !important;
+    }
+    @import "./asstes/css/commentsData.wxss";
+    @import "./asstes/css/font.wxss";
+</style>
+
+<script>
+import wepy from 'wepy';
+export default class extends wepy.app {
+  config = {
+        pages: [
+            "pages/login/login",
+            "pages/movie/movie",
+            "pages/uncoming/uncoming",
+            "pages/mine/mine",
+            "pages/film-detail/film-detail",
+            "pages/comments/comments",
+            "pages/search/search",
+            "pages/city/city",
+            "pages/music/music",
+            'pages/index'
+        ],
+        window: {
+            backgroundTextStyle: 'light',
+            navigationBarBackgroundColor: '#2d8cf0',
+            navigationBarTitleText: 'WeChat',
+            "navigationStyle":"custom",
+            navigationBarTextStyle: 'white'
+        },
+        "tabBar": {
+            "color":"#333333",
+            "selectedColor":"#2d8cf0",
+            "backgroundColor":"#ffffff",
+            "list": [
+                {
+                    "pagePath": "pages/movie/movie",
+                    "iconPath":"asstes/images/1.png",
+                    "selectedIconPath":"asstes/images/1-1.png",
+                    "text": "电影"
+                },
+                {
+                    "pagePath": "pages/music/music",
+                    "iconPath":"asstes/images/2.png",
+                    "selectedIconPath":"asstes/images/2-1.png",
+                    "text": "音乐"
+                },
+                {
+                    "pagePath": "pages/mine/mine",
+                    "iconPath":"asstes/images/3.png",
+                    "selectedIconPath":"asstes/images/3-1.png",
+                    "text": "我"
+                }
+            ]
+        },
+        "networkTimeout": {
+        "request": 10000,
+        "downloadFile": 10000
+        },
+        "debug": true,
+        "navigateToMiniProgramAppIdList": ["wxea45a26d1447570f"]
+    }
+
+    globalData = {
+        userInfo: null
+    }
+    onLaunch() {
+        wepy.getSystemInfo({
+            success: function(res) {
+
+            }
+        })
+    }
+    getUserInfo(cb) {
+        const that = this
+        if (this.globalData.userInfo) {
+            return this.globalData.userInfo
+        }
+        wepy.getUserInfo({
+            success (res) {
+                that.globalData.userInfo = res.userInfo
+                cb && cb(res.userInfo)
+            }
+        })
+    }
+
+    /**
+     * 评分规格
+     */
+    handleRating(type){
+        if(~~type <= 0 ){
+            return 0;
+        }else if( ~~type >0 && ~~type<= 2){
+            return 1;
+        }else if(~~type >2 && ~~type <=4){
+            return 2;
+        }else if(~~type >4 && ~~type <=6){
+            return 3;
+        }else if(~~type <=8 && ~~type >6){
+            return 4;
+        }else{
+            return 5;
+        }
+    }
+}
+</script>

@@ -1,0 +1,49 @@
+<template>
+    <view class="list-item" @tap="handleDetail({{item}})">
+        <view class="list-item-left">
+            <image src="{{item.images.small}}"></image>
+        </view>
+        <view class="list-item-right">
+            <view class="list-item-right-1">{{item.title}}</view>
+            <view class="list-item-right-2">
+                <i-rate count="5" value="{{item.average}}"></i-rate>{{item.rating.average == '0'?"暂无评分":item.rating.average}}
+            </view>
+            <view class="list-item-right-3">
+                {{item.text}}
+            </view>
+        </view>
+    </view>
+</template>
+<script>
+    import wepy from "wepy";
+    export default class Searchcom extends wepy.component {
+        props = {
+            item:{}
+        }
+        data = {
+
+        }
+        methods = {
+            handleDetail(row){
+                wepy.redirectTo({
+                    url:`../film-detail/film-detail?id=${row.id}&title=${row.title}&type=ing`
+                })
+            }
+        }
+        events = {
+          'index-broadcast': (...args) => {
+            let $event = args[args.length - 1]
+            console.log($event)
+          }
+        }
+
+        watch = {
+          item (curVal, oldVal) {
+            console.log(curVal)
+          }
+        }
+        onLoad(){
+
+        }
+    }
+</script>

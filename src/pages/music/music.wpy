@@ -1,0 +1,64 @@
+<template>
+    <loading hidden="{{isloading}}">正在加载...</loading>
+    <view style='height:180rpx;line-height:240rpx;background:#2d8cf0'>
+        <header></header>
+    </view>
+    <view>
+        <!-- <repeat for="{{list}}" item="item"> -->
+            <child :num="item"></child>
+        <!-- </repeat> -->
+    </view>
+</template>
+<script>
+    import wepy from "wepy";
+    import Child from "../../components/counter";
+    import Header from "../../components/header";
+    export default class Music extends wepy.page{
+        config={
+            "component": true,
+            "enablePullDownRefresh":true,
+            "navigationBarTitleText": '音乐',
+            "backgroundColor":"#2d8cf0",
+            "usingComponents": {
+                "i-button": "../../iview/button/index",
+                "i-tabs": "../../iview/tabs/index",
+                "i-tab": "../../iview/tab/index",
+                "i-load-more": "../../iview/load-more/index"
+            }
+        }
+        data={
+            list:[20,40,60,90],
+            current:"tab1",
+            isloading:false,
+            item:80
+        }
+        methods = {
+
+        }
+        components = {
+             child: Child,
+             header:Header
+        }
+        handleChange({detail }){
+            this.current = detail.key;
+            this.$apply();
+        }
+        onLoad(){
+            this.handleGetMusicData();
+        }
+
+        handleGetMusicData(){
+            let that = this;
+            wepy.request({
+                url:`https://c.y.qq.com/v8/fcg-bin/fcg_v8_toplist_cp.fcg?g_tk=5381&uin=0&format=json&inCharset=utf-8&outCharset=utf-8¬ice=0&platform=h5&needNewCode=1&tpl=3&page=detail&type=top&topid=27&_=1519963122923`,
+                success(res){
+                    console.log(res);
+                    if(res.statusCode == 200){
+                        that.isloading = true;
+                        that.$apply();
+                    }
+                }
+            })
+        }
+    }
+</script>

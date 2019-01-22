@@ -1,0 +1,115 @@
+<template>
+    <loading hidden="{{isloading}}">正在加载...</loading>
+    <view id="comments" wx:if="{{isloading}}" style="margin-top:20rpx;">
+        <view class="comments">
+            <view class="comments-header">
+                <view>短评</view>
+            </view>
+            <block wx:for="{{comments}}" wx:key="index" wx:for-item="item">
+                <view class="comments-index">
+                    <view class="comments-index-1">
+                        <view>
+                            <image src="{{item.author.avatar}}"></image>
+                        </view>
+                        <view class="comments-index-1-2">
+                            <view>{{item.author.name}}</view>
+                            <view class="comments-index-1-2-2">
+                                <i-rate count="5" value="{{item.rating.value}}"  size="12"></i-rate>
+                                <text class="text">{{item.created_at}}</text>
+                            </view>
+                        </view>
+                    </view>
+                    <view class="comments-index-2">{{item.content}}</view>
+                    <view class="comments-index-3"><i-icon type="praise" size="16" color="#999"/> {{item.useful_count}}</view>
+                </view>
+            </block>
+        </view>
+    </view>
+    <view class="load-more-wrap" wx:if="{{isloading}}">
+        <block wx:if="{{hasMore}}">
+            <view class="load-content">
+                <text class="weui-loading"/><text class="loading-text">玩命加载中</text>
+            </view>
+        </block>
+        <block wx:else>
+            <view class="load-content">
+                <text>没有更多内容了</text>
+            </view>
+        </block>
+    </view>
+</template>
+<script>
+    import wepy from "wepy";
+    export default class Comments extends wepy.page{
+        config={
+            "navigationBarTitleText": '',
+            "usingComponents": {
+                "i-icon": "../../iview/icon/index",
+                "i-button": "../../iview/button/index",
+                "i-progress": "../../iview/progress/index",
+                "i-rate": "../../iview/rate/index"
+            }
+        }
+        data = {
+            start:0,
+            isloading:false,
+            commentsData:{},
+            comments:[],
+            id:"",
+            title:"",
+            hasMore: true,
+        }
+
+        methods = {
+
+        }
+        onLoad(options){
+            this.id = options.id;
+            wepy.setNavigationBarTitle({
+                title:`<<${options.title}>>短评`
+            });
+            this.$apply();
+            this.handleGetCommentsData();
+        }
+
+        onShow(){
+            this.comments = [];
+            this.$apply();
+        }
+        /**
+         * 短评  数据列表
+         */
+
+        handleGetCommentsData(){
+            let that = this;
+            wepy.request({
+                url:`https://api.douban.com/v2/movie/subject/${that.id}/comments?apikey=0b2bdeda43b5688921839c8ecb20399b&count=10&start=${that.start}&client=&udid=`,
+                header: {
+                    'content-type': 'json'
+                },
+                success(res){
+                    that.isloading = true;
+                    that.comments = that.comments.concat(res.data.comments);
+                    if(res.data.comments.length != 10){
+                        that.hasMore = false;
+                        that.$apply();
+                        return false;
+                    }
+                    that.$apply();
+                }
+            })
+        }
+        /*
+        *上拉
+         */
+        onReachBottom(){
+            this.start +=10;
+            this.handleGetCommentsData();
+        }
+
+        onHide(){
+            this.comments = [];
+            this.$apply();
+        }
+    }
+</script>

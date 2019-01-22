@@ -1,0 +1,48 @@
+<style lang="less">
+
+</style>
+<template>
+    <view class="container">
+        轻武器无
+    </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  export default class Index extends wepy.page {
+    config = {
+      navigationBarTitleText: 'test'
+    }
+    components = {
+
+    }
+
+    mixins = []
+
+    data = {
+
+    }
+
+    computed = {
+
+    }
+
+    methods = {
+
+    }
+
+    events = {
+
+    }
+
+    onLoad() {
+        // console.log(wx.canIUse('openBluetoothAdapter'));
+        // wx.getSystemInfo({
+        //     success(res){
+        //         console.log(res)
+        //     }
+        // })
+        console.log(wx.getLaunchOptionsSync())
+    }
+  }
+</script>
